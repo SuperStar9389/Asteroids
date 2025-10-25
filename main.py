@@ -27,10 +27,15 @@ def main():
         updateable.update(dt)
         for sprite in drawable:
             sprite.draw(screen)
-        for sprite in asteroids:
-            if player.iscolliding(sprite): 
+        for asteroid in asteroids:
+            if player.iscolliding(asteroid): 
                 print("Game over!")
                 return
+            for shot in shots:
+                if shot.iscolliding(asteroid):
+                    shot.kill()
+                    asteroid.kill()
+            
         pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
