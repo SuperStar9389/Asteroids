@@ -12,11 +12,13 @@ def main():
     updateable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
+    powerups = pygame.sprite.Group()
     shots = pygame.sprite.Group()
     Player.containers = (updateable, drawable)
     Asteroid.containers = (updateable, drawable, asteroids)
     AsteroidField.containers = (updateable)
     Shot.containers = (shots, drawable, updateable)
+    PowerUp.containers = (powerups, drawable, updateable)
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
@@ -28,13 +30,18 @@ def main():
         for sprite in drawable:
             sprite.draw(screen)
         for asteroid in asteroids:
-            if player.iscolliding(asteroid): 
+            if player.iscolliding(asteroid) and player.powerup_timer <= 0: 
                 print("Game over!")
                 return
             for shot in shots:
                 if shot.iscolliding(asteroid):
                     shot.kill()
                     asteroid.split()
+        for powerup in powerups:
+            if player.iscolliding(powerup):
+                player.powerup_timer = PLAYER_POWERUP_DURATION
+                print("Powerup!")
+                powerup.kill()
             
         pygame.display.flip()
         for event in pygame.event.get():
